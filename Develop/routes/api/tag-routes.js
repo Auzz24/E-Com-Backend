@@ -22,9 +22,9 @@ router.get('/:id', (req, res) => {
   // be sure to include its associated Product data
   Tag.findOne({
     where: {
-      tag_id: req.params.id
+      id: req.params.id
     },
-    include: [{ model: ProductTag}]
+    include: [{ model: Product}]
   })
     .then(dbTagData => {
       if (!dbTagData) {
@@ -48,7 +48,22 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
-});
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then(dbProductData => {
+      if (!dbProductData) {
+        res.status(404).json({ message: 'Product deleted' });
+        return;
+      }
+      res.json(dbProductData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+  });
 
 module.exports = router;
